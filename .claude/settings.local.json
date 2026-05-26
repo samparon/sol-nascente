@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell($env:Path = [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"Machine\"\\) + \";\" + [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"User\"\\); cd \"c:\\\\Users\\\\User\\\\Gui CLaude CODE\\\\chacara-pagamentos\"; npm install gh-pages --save-dev 2>&1)",
+      "PowerShell($env:Path = [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"Machine\"\\) + \";\" + [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"User\"\\); cd \"c:\\\\Users\\\\User\\\\Gui CLaude CODE\\\\chacara-pagamentos\"; git init; git add .; git commit -m \"Chacreamento Sol Nascente - sistema de gestão de vendas\" 2>&1)"
+    ]
+  }
+}
