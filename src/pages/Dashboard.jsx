@@ -1,5 +1,5 @@
 import { useApp } from '../context/AppContext'
-import { Users, AlertTriangle, CheckCircle, DollarSign, BadgeCheck } from 'lucide-react'
+import { Users, AlertTriangle, CheckCircle, DollarSign, BadgeCheck, CalendarClock } from 'lucide-react'
 
 const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']
 const fmt = v => Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
@@ -11,12 +11,14 @@ export default function Dashboard() {
   const hoje = new Date()
   const mes = hoje.getMonth() + 1
   const ano = hoje.getFullYear()
+  const hojeStr = hoje.toISOString().split('T')[0]
 
   const resumo = getResumoMensal(mes, ano)
   const inadimplentes = getInadimplentes()
   const parcelasMes = getParcelasDoMes(mes, ano)
   const pendentes = parcelasMes.filter(p => !p.pago)
   const pagas = parcelasMes.filter(p => p.pago)
+  const vencemHoje = parcelasMes.filter(p => p.parcela.dataVencimento === hojeStr && !p.pago)
 
   const cards = [
     { label: 'Total de Clientes', value: clientes.length, icon: Users, color: 'bg-blue-500' },
@@ -43,6 +45,40 @@ export default function Dashboard() {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Vencem Hoje */}
+      <div className="bg-blue-50 border border-blue-200 rounded-xl p-5 mb-6">
+        <h2 className="text-base font-semibold text-blue-700 mb-1 flex items-center gap-2">
+          <CalendarClock size={16} /> Vencem hoje — {hoje.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' })}
+        </h2>
+        {vencemHoje.length === 0 ? (
+          <p className="text-sm text-blue-400 mt-2">Nenhuma parcela vence hoje.</p>
+        ) : (
+          <>
+            <p className="text-xs text-blue-500 mb-3">{vencemHoje.length} parcela{vencemHoje.length !== 1 ? 's' : ''} a receber — {fmt(vencemHoje.reduce((acc, p) => acc + p.parcela.valor, 0))}</p>
+            <ul className="divide-y divide-blue-100">
+              {vencemHoje.map(({ cliente, parcela }) => (
+                <li key={`${cliente.id}-${parcela.numero}`} className="py-2 flex justify-between items-center gap-3">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-blue-800 text-sm">{cliente.nome}</p>
+                    <p className="text-xs text-blue-500">
+                      {[cliente.numChacara && `Ch. ${cliente.numChacara}`, cliente.quadra && `Qd. ${cliente.quadra}`].filter(Boolean).join(' — ')}
+                      {(cliente.numChacara || cliente.quadra) ? ' — ' : ''}Parcela {parcela.numero}
+                      {cliente.telefone && ` — ${cliente.telefone}`}
+                    </p>
+                  </div>
+                  <span className="text-sm font-bold text-blue-700 flex-shrink-0">{fmt(parcela.valor)}</span>
+                  <button
+                    onClick={() => marcarPago(cliente.id, 'parcela', String(parcela.numero), parcela.valor, hojeStr)}
+                    className="flex items-center gap-1 bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1.5 rounded-lg flex-shrink-0 font-medium">
+                    <BadgeCheck size={13} /> Pagar
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
       </div>
 
       <div className="grid md:grid-cols-2 gap-6 mb-6">
