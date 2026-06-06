@@ -86,6 +86,12 @@ export default function Dashboard() {
               ))}
             </tbody>
           </table>
+          <div className="mt-4 pt-4 border-t-2 border-gray-200 flex justify-between items-center">
+            <span className="font-semibold text-gray-700">Total Recebido</span>
+            <span className="text-lg font-bold text-green-600">
+              {fmt(tabelaOrdenada.filter(p => p.pago).reduce((acc, p) => acc + p.parcela.valor, 0))}
+            </span>
+          </div>
         </div>
       </div>
     </div>
