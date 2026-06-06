@@ -166,6 +166,41 @@ export default function Dashboard() {
           </ul>
         </div>
       )}
+
+      {/* Tabela do mês ordenada por dia de vencimento */}
+      <div className="bg-white rounded-xl shadow mt-6 overflow-hidden">
+        <div className="bg-green-500 px-5 py-3">
+          <h2 className="text-base font-semibold text-white">Mês {MESES[mes - 1]}</h2>
+        </div>
+        <div className="p-5">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b-2 border-gray-200">
+                <th className="text-left pb-2 font-semibold text-gray-700">Cliente</th>
+                <th className="text-right pb-2 font-semibold text-gray-700">Valor</th>
+                <th className="text-right pb-2 font-semibold text-gray-700">Vencimento</th>
+                <th className="text-right pb-2 font-semibold text-gray-700">Pago</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[...parcelasMes]
+                .sort((a, b) => Number(a.parcela.dataVencimento.split('-')[2]) - Number(b.parcela.dataVencimento.split('-')[2]))
+                .map(({ cliente, parcela, pago }) => (
+                  <tr key={`${cliente.id}-${parcela.numero}`} className="border-b border-gray-100 last:border-0">
+                    <td className={`py-2 ${pago ? 'text-gray-400' : 'text-gray-800'}`}>{cliente.nome}</td>
+                    <td className={`py-2 text-right ${pago ? 'text-gray-400' : 'text-gray-800'}`}>{fmt(parcela.valor)}</td>
+                    <td className={`py-2 text-right font-medium ${pago ? 'text-gray-400' : 'text-gray-600'}`}>
+                      {Number(parcela.dataVencimento.split('-')[2])}
+                    </td>
+                    <td className={`py-2 text-right font-semibold ${pago ? 'text-green-600' : ''}`}>
+                      {pago ? 'Sim' : ''}
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   )
 }
